@@ -20,6 +20,7 @@ const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, uploadsDir),
     filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
 });
+
 const upload = multer({ storage });
 
 // Upload route
@@ -33,10 +34,10 @@ app.post('/upload', upload.single('image'), (req, res) => {
     res.json({ url: newImagePath });
 });
 
-// Route to get all images (so they always float)
+// Route to get all images
 app.get('/images', (req, res) => {
     const data = JSON.parse(fs.readFileSync(bookingsFile, 'utf8'));
-    res.json(data); // send all saved images
+    res.json(data);
 });
 
 // Delete route
@@ -55,8 +56,5 @@ app.post('/delete', (req, res) => {
     res.send('Deleted');
 });
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Export app for Vercel serverless function
+module.exports = app;
