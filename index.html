@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Our Beautiful Memories ❤️</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+<script>
+const password = "Karan123";
+
+let userInput = prompt("Enter password to access the site");
+
+if(userInput !== password){
+    document.body.innerHTML = "<h1>Access Denied</h1>";
+}
+</script>
+<body>
+
+<h1>Our Beautiful Memories ❤️</h1>
+
+<p>Upload your photos and videos</p>
+
+<div class="uploadBox" onclick="openUpload()">
++
+</div>
+
+<input 
+type="file"
+id="fileInput"
+multiple
+hidden
+accept="image/*,video/*"
+>
+
+<!-- ORBIT SYSTEM (auto creates circles) -->
+
+<div id="orbitSystem" class="orbitSystem"></div>
+
+<!-- FULLSCREEN VIEWER -->
+
+<div id="fullscreenViewer" class="viewer" onclick="closeViewer()">
+
+<img id="viewerImage">
+
+<video id="viewerVideo" controls></video>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+
+</html>

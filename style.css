@@ -1,0 +1,123 @@
+body {
+    /* Replace your old linear-gradient with this */
+      background-image: url('https://www.campliveoakfl.com/wp-content/uploads/2016/06/Planets-in-the-sky.jpg'); 
+    background-size: cover; /* Ensures image fills the entire screen */
+    background-position: center; /* Centers the galaxy */
+    background-attachment: fixed; /* Keeps background still while scrolling */
+    background-repeat: no-repeat;
+    
+    /* Keep your existing styles */
+    text-align: center;
+    font-family: cursive;
+    color: white;
+    overflow: hidden;
+    margin: 0;
+    min-height: 100vh;
+}
+
+
+h1 { margin-top: 40px; }
+
+/* UPLOAD BOX */
+.uploadBox {
+    width: 120px;
+    height: 120px;
+    border: 3px dashed #050c0e;
+    border-radius: 20px;
+    font-size: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 40px auto;
+    cursor: pointer;
+    background: #87CEEB;
+    color: #110909;
+    transition: 0.3s;
+}
+
+.uploadBox:hover {
+    background: #5bbde6;
+    transform: scale(1.1);
+}
+
+/* MEDIA (Photos & Videos) - SMOOTHNESS FIX */
+.media {
+    width: 120px; /* Slightly larger */
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    position: fixed; /* Changed to fixed for better transform math */
+    top: 0;
+    left: 0;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+    will-change: transform; /* Triggers GPU acceleration */
+    backface-visibility: hidden;
+    transition: transform 5s linear; /* Smooths out the JS updates */
+}
+
+/* 3D SPARKLE HEARTS (Gold & Red) */
+.goldHeart3D, .redHeart3D {
+    position: fixed;
+    font-size: 3.5rem; /* MUCH LARGER */
+    pointer-events: none;
+    z-index: -1;
+    will-change: transform, opacity;
+    animation: sparkleFloat 15s ease-in infinite;
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8)); /* Glow effect */
+}
+
+.goldHeart3D { text-shadow: 0 0 15px gold, 0 0 30px orange; }
+.redHeart3D { text-shadow: 0 0 15px red, 0 0 30px darkred; }
+
+@keyframes sparkleFloat {
+    0% { 
+        transform: translate3d(0, 0, 0) scale(0.5); 
+        opacity: 0; 
+    }
+    20% { opacity: 1; }
+    100% { 
+        transform: translate3d(50px, -100vh, 200px) scale(2.5); 
+        opacity: 0; 
+    }
+}
+
+
+/* BACKGROUND PINK HEARTS */
+.heart {
+    position: fixed;
+    bottom: -50px;
+    font-size: 30px;
+    animation: floatUp 12s linear infinite;
+    opacity: 0.8;
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-110vh) scale(2); opacity: 0; }
+}
+
+/* TRAIL HEARTS */
+.trailHeart {
+    position: absolute;
+    font-size: 20px;
+    pointer-events: none;
+    will-change: transform, opacity;
+    animation: fadeTrail 1s ease-out forwards;
+}
+
+@keyframes fadeTrail {
+    0% { opacity: 1; transform: scale(1.2); }
+    100% { opacity: 0; transform: scale(0.2) translateY(-20px); }
+}
+
+/* FULLSCREEN VIEWER */
+.viewer {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
