@@ -250,3 +250,20 @@ trail.remove();
 },1000);
 
 }
+document.addEventListener("click",function(e){
+
+if(e.target.classList.contains("mediaItem")){
+
+    let previewBox = document.getElementById("previewBox");
+    let previewImage = document.getElementById("previewImage");
+
+    previewImage.src = e.target.src;
+
+    previewBox.style.display="flex";
+}
+
+});
+
+document.getElementById("previewBox").onclick=function(){
+    this.style.display="none";
+}
