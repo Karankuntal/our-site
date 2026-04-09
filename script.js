@@ -205,6 +205,8 @@ viewer.style.display="flex";
 
 /* FULLSCREEN VIDEO */
 
+/* FULLSCREEN VIDEO */
+
 function openVideo(src){
 
 const viewer=document.getElementById("fullscreenViewer");
@@ -214,9 +216,11 @@ const video=document.getElementById("viewerVideo");
 img.style.display="none";
 video.style.display="block";
 
-video.src=src;
+video.src = src;
+video.currentTime = 0;
+video.play();
 
-viewer.style.display="flex";
+viewer.style.display = "flex";
 
 }
 
@@ -225,7 +229,13 @@ viewer.style.display="flex";
 
 function closeViewer(){
 
-document.getElementById("fullscreenViewer").style.display="none";
+const viewer=document.getElementById("fullscreenViewer");
+const video=document.getElementById("viewerVideo");
+
+video.pause();
+video.currentTime = 0;
+
+viewer.style.display="none";
 
 }
 
@@ -252,7 +262,7 @@ trail.remove();
 }
 document.addEventListener("click",function(e){
 
-if(e.target.classList.contains("mediaItem")){
+if(e.target.classList.contains("media")){
 
     let previewBox = document.getElementById("previewBox");
     let previewImage = document.getElementById("previewImage");
@@ -264,6 +274,10 @@ if(e.target.classList.contains("mediaItem")){
 
 });
 
-document.getElementById("previewBox").onclick=function(){
-    this.style.display="none";
+const previewBox = document.getElementById("previewBox");
+
+if(previewBox){
+    previewBox.onclick = function(){
+        this.style.display="none";
+    }
 }
