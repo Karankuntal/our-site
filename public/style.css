@@ -15,12 +15,11 @@ body {
     text-align: center;
     font-family: cursive;
     color: white;
-    overflow: hidden; /* Prevents scrollbars during floating animations */
+    overflow: hidden; 
 }
 
 h1 { margin-top: 40px; }
 
-/* FIX: Added container styling to prevent media from clumping in the corner */
 .orbitSystem {
     position: relative;
     width: 100vw;
@@ -49,13 +48,13 @@ h1 { margin-top: 40px; }
     transform: scale(1.1);
 }
 
-/* MEDIA (Photos & Videos) */
+/* MEDIA */
 .media {
     width: 120px;
     height: 120px;
     border-radius: 50%;
     object-fit: cover;
-    position: fixed; /* Keep as fixed for your JS floating logic to work */
+    position: fixed; 
     top: 0;
     left: 0;
     cursor: pointer;
@@ -64,37 +63,39 @@ h1 { margin-top: 40px; }
     backface-visibility: hidden;
 }
 
-/* 3D HEARTS */
-/* ALL 3D HEARTS (Red, Gold, Sparkle) */
-.goldHeart3D, .redHeart3D, .sparkleHeart3D {
+/* --- REQUIRED CHANGES START HERE --- */
+
+/* ALL 3D HEARTS (No Rotation, No Scaling) */
+.goldHeart3D, .redHeart3D {
     position: fixed;
-    font-size: 3.5rem;
+    bottom: -100px; /* Start below the screen */
+    font-size: 3rem; /* Fixed size */
     pointer-events: none;
     z-index: -1;
     will-change: transform, opacity;
-    animation: sparkleFloat 15s ease-in-out infinite; 
+    /* Use the new simple vertical animation */
+    animation: simpleFloat 15s linear infinite; 
 }
 
-/* Specific Colors & Glows */
 .goldHeart3D { 
     text-shadow: 0 0 20px gold, 0 0 40px orange; 
-    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.9));
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8));
 }
+
 .redHeart3D { 
     text-shadow: 0 0 20px red, 0 0 40px darkred; 
-    filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.8));
-}
-.sparkleHeart3D { 
-    text-shadow: 0 0 20px #fff, 0 0 40px #ff00ff; 
-    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 1));
+    filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.7));
 }
 
-@keyframes sparkleFloat {
-    0% { transform: translate3d(0, 0, 0) rotateY(0deg) scale(0.5); opacity: 0; }
-    20% { opacity: 1; }
-    100% { transform: translate3d(100px, -110vh, 500px) rotateY(360deg) scale(3); opacity: 0; }
+/* New Animation: Only floats straight up */
+@keyframes simpleFloat {
+    0% { transform: translateY(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-120vh); opacity: 0; }
 }
 
+/* --- REQUIRED CHANGES END HERE --- */
 
 /* FLOATING PINK HEARTS */
 .heart {

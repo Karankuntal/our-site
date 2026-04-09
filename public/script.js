@@ -2,8 +2,8 @@ const fileInput = document.getElementById("fileInput");
 const orbitSystem = document.getElementById("orbitSystem");
 let activeMediaWrapper = null; 
 
-// Load previously uploaded files from server
-fetch('/images')
+// FIXED: Updated path to /api/images for Vercel
+fetch('/api/images')
   .then(res => res.json())
   .then(files => {
     files.forEach(file => {
@@ -38,8 +38,8 @@ fileInput.addEventListener("change", function(){
         const formData = new FormData();
         formData.append('image', file);
 
-        // This sends the file to your server/Cloudinary
-        fetch('/upload', {
+        // FIXED: Updated path to /api/upload for Vercel
+        fetch('/api/upload', {
             method: 'POST',
             body: formData
         })
@@ -74,32 +74,36 @@ function startFloating(element){
     animate();
 }
 
-/* BACKGROUND EFFECTS */
-/* MULTI-COLOR 3D HEARTS SPAWNER */
+/* --- REQUIRED CHANGES START HERE --- */
+
+/* FLOATING HEARTS WITH SPARKLES (Fixed for 15s) */
 setInterval(() => {
     const heart = document.createElement("div");
     
-    // Randomly pick which heart to show
+    // Combining sparkles with the hearts as requested
     const types = [
-        { char: "💛", class: "goldHeart3D" },
-        { char: "❤️", class: "redHeart3D" },
-        { char: "✨", class: "sparkleHeart3D" }
+        { char: "✨💛", class: "goldHeart3D" },
+        { char: "✨❤️", class: "redHeart3D" }
     ];
     const choice = types[Math.floor(Math.random() * types.length)];
 
     heart.className = choice.class;
     heart.innerHTML = choice.char;
+    
+    // Random position across the bottom
     heart.style.left = Math.random() * 100 + "vw";
-    heart.style.top = Math.random() * 100 + "vh";
+    heart.style.top = "100vh"; 
 
     document.body.appendChild(heart);
 
-    // Keep them on screen for the full 15s animation
+    // Keep them on screen for the full 15s animation set in CSS
     setTimeout(() => {
         heart.remove();
     }, 15000); 
 
-}, 100); // Spawns a new random heart every 1 second
+}, 1200); // Spawns every 1.2 seconds to avoid clutter
+
+/* --- REQUIRED CHANGES END HERE --- */
 
 
 function openImage(src,element){
