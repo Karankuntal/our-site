@@ -1,21 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Couple Memories ❤️</title>
-<link rel="stylesheet" href="style.css">
+    <title>Couple Memories ❤️</title>
+    <!-- FIXED: Added ./ for Vercel -->
+    <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
+    <!-- Optional: Password protection for your dashboard -->
+    <script>
+        const pass = "Ashikaran831";
+        if(prompt("Enter Admin Password") !== pass) {
+            document.body.innerHTML = "<h1>Access Denied</h1>";
+            window.stop();
+        }
+    </script>
 
-<h1>Our Memories ❤️</h1>
+    <h1>Our Memories ❤️</h1>
 
-<div class="uploadBox" onclick="openUpload()">+</div>
+    <div class="uploadBox" onclick="openUpload()">+</div>
 
-<input type="file" id="fileInput" hidden multiple accept="image/*,video/*">
+    <input type="file" id="fileInput" hidden multiple accept="image/*,video/*">
 
-<div id="gallery"></div>
+    <div id="gallery"></div>
 
-<script src="script.js"></script>
-
+    <!-- FIXED: Added ./ for Vercel -->
+    <script src="./script.js"></script>
 </body>
 </html>

@@ -1,60 +1,65 @@
 const express = require('express');
 const multer = require('multer');
-const fs = require('fs');
-const path = require('path');
+const cloudinary = require('cloudinary').v2;
 const app = express();
 
-app.use(express.static('public')); // Serve your website files
-app.use(express.json()); // Needed for delete requests
-
-// Ensure uploads folder exists
-const uploadsDir = 'Public/uploads/';
-if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true });
-
-// Ensure bookings.json exists
-const bookingsFile = 'bookings.json';
-if (!fs.existsSync(bookingsFile)) fs.writeFileSync(bookingsFile, JSON.stringify([]));
-
-// Configure Multer
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => cb(null, uploadsDir),
-    filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
+// 1. CLOUDINARY CONFIGURATION
+// Replace these with the keys from your Cloudinary Dashboard
+cloudinary.config({ 
+  cloud_name: 'YOUR_CLOUD_NAME', 
+  api_key: 'YOUR_API_KEY', 
+  api_secret: 'YOUR_API_SECRET',
+  secure: true 
 });
 
+app.use(express.static('public')); 
+app.use(express.json());
+
+// 2. MULTER CONFIG (Storage in memory for Cloudinary)
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// Upload route
-app.post('/upload', upload.single('image'), (req, res) => {
-    const newImagePath = `/uploads/${req.file.filename}`;
+// Temporary array (Note: For 100% permanent data, use Firebase/MongoDB later)
+let memoryDatabase = []; 
 
-    const data = JSON.parse(fs.readFileSync(bookingsFile, 'utf8'));
-    data.push({ url: newImagePath });
-    fs.writeFileSync(bookingsFile, JSON.stringify(data, null, 2));
+// UPLOAD ROUTE (Saves to Cloudinary)
+app.post('/api/upload', upload.single('image'), async (req, res) => {
+    try {
+        if (!req.file) return res.status(400).send("No file uploaded");
 
-    res.json({ url: newImagePath });
+        // Convert file buffer to base64 for Cloudinary
+        const fileBase64 = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+        
+        const result = await cloudinary.uploader.upload(fileBase64, {
+            folder: 'couple_site',
+            resource_type: 'auto'
+        });
+
+        const newEntry = { url: result.secure_url, public_id: result.public_id };
+        memoryDatabase.push(newEntry);
+
+        res.json(newEntry);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Upload to Cloudinary failed" });
+    }
 });
 
-// Route to get all images
-app.get('/images', (req, res) => {
-    const data = JSON.parse(fs.readFileSync(bookingsFile, 'utf8'));
-    res.json(data);
+// GET IMAGES ROUTE
+app.get('/api/images', (req, res) => {
+    res.json(memoryDatabase);
 });
 
-// Delete route
-app.post('/delete', (req, res) => {
-    const filename = req.body.filename;
-    const filePath = path.join(uploadsDir, filename);
-
-    // Remove from filesystem
-    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-
-    // Remove from JSON
-    let data = JSON.parse(fs.readFileSync(bookingsFile, 'utf8'));
-    data = data.filter(item => item.url !== `/uploads/${filename}`);
-    fs.writeFileSync(bookingsFile, JSON.stringify(data, null, 2));
-
-    res.send('Deleted');
+// DELETE ROUTE (Removes from Cloudinary)
+app.post('/api/delete', async (req, res) => {
+    try {
+        const { public_id } = req.body;
+        await cloudinary.uploader.destroy(public_id);
+        memoryDatabase = memoryDatabase.filter(item => item.public_id !== public_id);
+        res.send('Deleted');
+    } catch (error) {
+        res.status(500).send("Delete failed");
+    }
 });
 
-// Export app for Vercel serverless function
 module.exports = app;
