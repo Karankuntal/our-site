@@ -76,55 +76,59 @@ function startFloating(element){
     animate();
 }
 
-/* FLOATING HEARTS WITH BOUNCE */
-const maxHearts = { red: 10, gold: 10 };
-let currentHearts = { red: 0, gold: 0 };
-
-function spawnHeart(type) {
-    if (currentHearts[type] >= maxHearts[type]) return;
-
+/* --- REQUIRED CHANGES: FLOATING UPWARD HEARTS --- */
+function spawnUpwardHeart(type) {
     const heart = document.createElement("div");
-    heart.className = type === "red" ? "redHeart3D" : "goldHeart3D";
-    heart.innerHTML = type === "red" ? "❤️" : "💛";
-    heart.style.position = "fixed";
 
-    let x = Math.random() * (window.innerWidth - 50);
-    let y = Math.random() * (window.innerHeight - 50);
-    let dx = (Math.random() * 1 + 0.5) * (Math.random() > 0.5 ? 1 : -1);
-    let dy = (Math.random() * 1 + 0.5) * (Math.random() > 0.5 ? 1 : -1);
-    let rotation = 0;
-
-    document.body.appendChild(heart);
-    currentHearts[type]++;
-
-    function animate() {
-        x += dx;
-        y += dy;
-        rotation += 0.2;
-
-        if (x <= 0 || x >= window.innerWidth - heart.offsetWidth) dx *= -1;
-        if (y <= 0 || y >= window.innerHeight - heart.offsetHeight) dy *= -1;
-
-        heart.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rotation}deg)`;
-        requestAnimationFrame(animate);
+    if(type === "gold") {
+        heart.className = "goldHeart3D";
+        heart.innerHTML = "💛";
+    } else if(type === "red") {
+        heart.className = "redHeart3D";
+        heart.innerHTML = "❤️";
+    } else if(type === "sparkle") {
+        heart.className = "sparkleHeart";
+        heart.innerHTML = "❤️";
     }
 
-    animate();
+    document.body.appendChild(heart);
 
-    // Remove heart after 15s
-    setTimeout(() => {
-        heart.remove();
-        currentHearts[type]--;
-    }, 15000);
+    let x = Math.random() * (window.innerWidth - 50);
+    let y = window.innerHeight + 50; // start below screen
+    heart.style.left = x + "px";
+    heart.style.top = y + "px";
+
+    const duration = 10000; // 10 seconds
+    const startTime = performance.now();
+
+    function animate(time) {
+        const elapsed = time - startTime;
+        const progress = elapsed / duration;
+
+        heart.style.top = (window.innerHeight - progress * (window.innerHeight + 100)) + "px";
+        heart.style.opacity = Math.min(progress + 0.2, 1);
+
+        // Optional sway
+        heart.style.transform = `translateX(${10 * Math.sin(progress * Math.PI * 4)}px)`;
+
+        if(elapsed < duration) {
+            requestAnimationFrame(animate);
+        } else {
+            heart.remove();
+        }
+    }
+
+    requestAnimationFrame(animate);
 }
 
-// Spawn red or gold hearts randomly every 1.2s
+// Spawn hearts randomly every 0.8s
 setInterval(() => {
-    const type = Math.random() > 0.5 ? "red" : "gold";
-    spawnHeart(type);
-}, 1200);
+    const types = ["gold", "red", "sparkle"];
+    const choice = types[Math.floor(Math.random() * types.length)];
+    spawnUpwardHeart(choice);
+}, 800);
 
-// FULLSCREEN VIEWER FUNCTIONS
+/* FULLSCREEN VIEWER FUNCTIONS */
 function openImage(src,element){
     activeMediaWrapper = element;
     const viewer=document.getElementById("fullscreenViewer");
