@@ -1,4 +1,8 @@
+const fileInput = document.getElementById("fileInput");
+const orbitSystem = document.getElementById("orbitSystem");
+
 let activeMediaWrapper = null; 
+
 // Load previously uploaded files from server and float them
 fetch('/images')
   .then(res => res.json())
@@ -9,7 +13,7 @@ fetch('/images')
         video.src = file.url;
         video.controls = true;
         video.className = "media";
-        video.onclick = () => openVideo(video.src);
+        video.onclick = () => openVideo(video.src, video);
         orbitSystem.appendChild(video);
         startFloating(video);
       } else {
@@ -17,14 +21,12 @@ fetch('/images')
         img.src = file.url;
         img.className = "media";
         img.decoding = "async";
-        img.onclick = () => openImage(img.src);
+        img.onclick = () => openImage(img.src, img);
         orbitSystem.appendChild(img);
         startFloating(img);
       }
     });
   });
-const fileInput = document.getElementById("fileInput");
-const orbitSystem = document.getElementById("orbitSystem");
 
 function openUpload(){
 fileInput.click();
@@ -50,7 +52,7 @@ img.src=e.target.result;
 img.className="media";
 img.decoding = "async";
 
-img.onclick=()=>openImage(img.src);
+img.onclick=()=>openImage(img.src,img);
 
 orbitSystem.appendChild(img);
 
@@ -72,7 +74,7 @@ video.controls=true;
 video.className="media";
 video.preservesPitch = false; 
 
-video.onclick=()=>openVideo(video.src);
+video.onclick=()=>openVideo(video.src,video);
 
 orbitSystem.appendChild(video);
 
@@ -187,7 +189,9 @@ heart.remove();
 
 /* FULLSCREEN IMAGE */
 
-function openImage(src){
+function openImage(src,element){
+
+activeMediaWrapper = element;
 
 const viewer=document.getElementById("fullscreenViewer");
 const img=document.getElementById("viewerImage");
@@ -205,9 +209,9 @@ viewer.style.display="flex";
 
 /* FULLSCREEN VIDEO */
 
-/* FULLSCREEN VIDEO */
+function openVideo(src,element){
 
-function openVideo(src){
+activeMediaWrapper = element;
 
 const viewer=document.getElementById("fullscreenViewer");
 const img=document.getElementById("viewerImage");
@@ -217,6 +221,7 @@ img.style.display="none";
 video.style.display="block";
 
 video.src = src;
+video.muted = false;
 video.currentTime = 0;
 video.play();
 
@@ -260,24 +265,22 @@ trail.remove();
 },1000);
 
 }
-document.addEventListener("click",function(e){
 
-if(e.target.classList.contains("media")){
 
-    let previewBox = document.getElementById("previewBox");
-    let previewImage = document.getElementById("previewImage");
+/* DELETE MEDIA */
 
-    previewImage.src = e.target.src;
+const deleteBtn = document.getElementById("deleteMediaBtn");
 
-    previewBox.style.display="flex";
+if(deleteBtn){
+deleteBtn.onclick = function(e){
+
+e.stopPropagation();
+
+if(activeMediaWrapper){
+activeMediaWrapper.remove();
 }
 
-});
+closeViewer();
 
-const previewBox = document.getElementById("previewBox");
-
-if(previewBox){
-    previewBox.onclick = function(){
-        this.style.display="none";
-    }
+};
 }

@@ -1,12 +1,10 @@
 body {
-    /* Replace your old linear-gradient with this */
-      background-image: url('https://www.campliveoakfl.com/wp-content/uploads/2016/06/Planets-in-the-sky.jpg'); 
-    background-size: cover; /* Ensures image fills the entire screen */
-    background-position: center; /* Centers the galaxy */
-    background-attachment: fixed; /* Keeps background still while scrolling */
+    background-image: url('https://www.campliveoakfl.com/wp-content/uploads/2016/06/Planets-in-the-sky.jpg'); 
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
     background-repeat: no-repeat;
-    
-    /* Keep your existing styles */
+
     text-align: center;
     font-family: cursive;
     color: white;
@@ -14,7 +12,6 @@ body {
     margin: 0;
     min-height: 100vh;
 }
-
 
 h1 { margin-top: 40px; }
 
@@ -40,31 +37,31 @@ h1 { margin-top: 40px; }
     transform: scale(1.1);
 }
 
-/* MEDIA (Photos & Videos) - SMOOTHNESS FIX */
+/* MEDIA (Photos & Videos) */
 .media {
-    width: 120px; /* Slightly larger */
+    width: 120px;
     height: 120px;
     border-radius: 50%;
     object-fit: cover;
-    position: fixed; /* Changed to fixed for better transform math */
+    position: fixed;
     top: 0;
     left: 0;
     cursor: pointer;
     box-shadow: 0 10px 20px rgba(0,0,0,0.6);
-    will-change: transform; /* Triggers GPU acceleration */
+    will-change: transform;
     backface-visibility: hidden;
-    transition: transform 5s linear; /* Smooths out the JS updates */
+    transition: transform 5s linear;
 }
 
-/* 3D SPARKLE HEARTS (Gold & Red) */
+/* 3D HEARTS */
 .goldHeart3D, .redHeart3D {
     position: fixed;
-    font-size: 3.5rem; /* MUCH LARGER */
+    font-size: 3.5rem;
     pointer-events: none;
     z-index: -1;
     will-change: transform, opacity;
     animation: sparkleFloat 15s ease-in infinite;
-    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8)); /* Glow effect */
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8));
 }
 
 .goldHeart3D { text-shadow: 0 0 15px gold, 0 0 30px orange; }
@@ -82,8 +79,7 @@ h1 { margin-top: 40px; }
     }
 }
 
-
-/* BACKGROUND PINK HEARTS */
+/* FLOATING PINK HEARTS */
 .heart {
     position: fixed;
     bottom: -50px;
@@ -122,58 +118,34 @@ h1 { margin-top: 40px; }
     display:none;
     align-items:center;
     justify-content:center;
-    padding:80px; /* margin around photo/video */
+    padding:80px; /* margin around media */
     box-sizing:border-box;
     z-index:1000;
 }
 
+/* IMAGE / VIDEO */
 #viewerImage,
 #viewerVideo{
     max-width:100%;
     max-height:100%;
     border-radius:20px;
 }
-#previewBox{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.85);
 
-    display:none;
-    justify-content:center;
-    align-items:center;
-
-    padding:80px;
-    box-sizing:border-box;
+/* DELETE BUTTON */
+#deleteMediaBtn{
+    position:absolute;
+    top:30px;
+    right:30px;
+    background:red;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    font-size:16px;
+    border-radius:8px;
+    cursor:pointer;
+    z-index:1100;
 }
 
-#previewBox img,
-#previewBox video{
-    max-width:100%;
-    max-height:100%;
-    border-radius:20px;
-}
-/* FULLSCREEN VIEWER */
-#fullscreenViewer{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:rgba(0,0,0,0.9);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:80px;
-    box-sizing:border-box;
-    z-index:1000;
-}
-
-#viewerImage,
-#viewerVideo{
-    max-width:100%;
-    max-height:100%;
-    border-radius:20px;
+#deleteMediaBtn:hover{
+    background:#cc0000;
 }

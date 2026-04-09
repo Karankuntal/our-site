@@ -41,7 +41,8 @@ export default function handler(req, res) {
     }
 
     return res.status(200).json({
-      url: req.file.path
+      url: req.file.path,          // Cloudinary media URL
+      public_id: req.file.filename // needed for deleting later
     });
 
   });

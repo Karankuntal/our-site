@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html>
 
@@ -8,6 +9,7 @@
 <link rel="stylesheet" href="style.css">
 
 </head>
+
 <script>
 const password = "Karan123";
 
@@ -17,6 +19,7 @@ if(userInput !== password){
     document.body.innerHTML = "<h1>Access Denied</h1>";
 }
 </script>
+
 <body>
 
 <h1>Our Beautiful Memories ❤️</h1>
@@ -43,6 +46,8 @@ accept="image/*,video/*"
 
 <div id="fullscreenViewer" class="viewer" onclick="closeViewer()">
 
+<button id="deleteMediaBtn">Delete</button>
+
 <img id="viewerImage">
 
 <video id="viewerVideo" controls></video>
@@ -50,14 +55,8 @@ accept="image/*,video/*"
 </div>
 
 <script src="script.js"></script>
-<div id="previewBox">
-    <img id="previewImage">
-</div>
-<div id="fullscreenViewer">
-    <img id="viewerImage">
-    <video id="viewerVideo" controls></video>
-</div>
 
 </body>
 
 </html>
+```
