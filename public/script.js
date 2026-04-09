@@ -75,14 +75,32 @@ function startFloating(element){
 }
 
 /* BACKGROUND EFFECTS */
-setInterval(()=>{
-    let heart=document.createElement("div");
-    heart.className="heart";
-    heart.innerHTML=Math.random()>0.5?"❤️":"💖";
-    heart.style.left=Math.random()*100+"%";
+/* MULTI-COLOR 3D HEARTS SPAWNER */
+setInterval(() => {
+    const heart = document.createElement("div");
+    
+    // Randomly pick which heart to show
+    const types = [
+        { char: "💛", class: "goldHeart3D" },
+        { char: "❤️", class: "redHeart3D" },
+        { char: "✨", class: "sparkleHeart3D" }
+    ];
+    const choice = types[Math.floor(Math.random() * types.length)];
+
+    heart.className = choice.class;
+    heart.innerHTML = choice.char;
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.top = Math.random() * 100 + "vh";
+
     document.body.appendChild(heart);
-    setTimeout(()=>heart.remove(),6000);
-},100);
+
+    // Keep them on screen for the full 15s animation
+    setTimeout(() => {
+        heart.remove();
+    }, 15000); 
+
+}, 100); // Spawns a new random heart every 1 second
+
 
 function openImage(src,element){
     activeMediaWrapper = element;

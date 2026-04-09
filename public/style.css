@@ -65,24 +65,36 @@ h1 { margin-top: 40px; }
 }
 
 /* 3D HEARTS */
-.goldHeart3D, .redHeart3D {
+/* ALL 3D HEARTS (Red, Gold, Sparkle) */
+.goldHeart3D, .redHeart3D, .sparkleHeart3D {
     position: fixed;
     font-size: 3.5rem;
     pointer-events: none;
     z-index: -1;
     will-change: transform, opacity;
-    animation: sparkleFloat 15s ease-in infinite;
-    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8));
+    animation: sparkleFloat 15s ease-in-out infinite; 
 }
 
-.goldHeart3D { text-shadow: 0 0 15px gold, 0 0 30px orange; }
-.redHeart3D { text-shadow: 0 0 15px red, 0 0 30px darkred; }
+/* Specific Colors & Glows */
+.goldHeart3D { 
+    text-shadow: 0 0 20px gold, 0 0 40px orange; 
+    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.9));
+}
+.redHeart3D { 
+    text-shadow: 0 0 20px red, 0 0 40px darkred; 
+    filter: drop-shadow(0 0 15px rgba(255, 0, 0, 0.8));
+}
+.sparkleHeart3D { 
+    text-shadow: 0 0 20px #fff, 0 0 40px #ff00ff; 
+    filter: drop-shadow(0 0 15px rgba(255, 255, 255, 1));
+}
 
 @keyframes sparkleFloat {
-    0% { transform: translate3d(0, 0, 0) scale(0.5); opacity: 0; }
+    0% { transform: translate3d(0, 0, 0) rotateY(0deg) scale(0.5); opacity: 0; }
     20% { opacity: 1; }
-    100% { transform: translate3d(50px, -100vh, 200px) scale(2.5); opacity: 0; }
+    100% { transform: translate3d(100px, -110vh, 500px) rotateY(360deg) scale(3); opacity: 0; }
 }
+
 
 /* FLOATING PINK HEARTS */
 .heart {
