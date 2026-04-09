@@ -1,4 +1,4 @@
-/* Ensure the page takes up the full screen with no white gaps */
+/* Fullscreen page */
 html, body {
     height: 100%;
     width: 100%;
@@ -65,16 +65,14 @@ h1 { margin-top: 40px; }
 
 /* --- REQUIRED CHANGES START HERE --- */
 
-/* ALL 3D HEARTS (No Rotation, No Scaling) */
+/* ALL 3D HEARTS (Bounce & Rotate with JS) */
 .goldHeart3D, .redHeart3D {
     position: fixed;
-    bottom: -100px; /* Start below the screen */
-    font-size: 3rem; /* Fixed size */
+    font-size: 3rem;
     pointer-events: none;
-    z-index: -1;
-    will-change: transform, opacity;
-    /* Use the new simple vertical animation */
-    animation: simpleFloat 15s linear infinite; 
+    z-index: 999;
+    will-change: transform;
+    animation: none; /* JS handles floating */
 }
 
 .goldHeart3D { 
@@ -87,31 +85,9 @@ h1 { margin-top: 40px; }
     filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.7));
 }
 
-/* New Animation: Only floats straight up */
-@keyframes simpleFloat {
-    0% { transform: translateY(0); opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
-    100% { transform: translateY(-120vh); opacity: 0; }
-}
-
 /* --- REQUIRED CHANGES END HERE --- */
 
-/* FLOATING PINK HEARTS */
-.heart {
-    position: fixed;
-    bottom: -50px;
-    font-size: 30px;
-    animation: floatUp 12s linear infinite;
-    opacity: 0.8;
-}
-
-@keyframes floatUp {
-    0% { transform: translateY(0) scale(1); opacity: 1; }
-    100% { transform: translateY(-110vh) scale(2); opacity: 0; }
-}
-
-/* TRAIL HEARTS */
+/* FLOATING PINK TRAIL HEARTS */
 .trailHeart {
     position: absolute;
     font-size: 20px;

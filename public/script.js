@@ -2,7 +2,7 @@ const fileInput = document.getElementById("fileInput");
 const orbitSystem = document.getElementById("orbitSystem");
 let activeMediaWrapper = null; 
 
-// FIXED: Updated path to /api/images for Vercel
+// FETCH IMAGES/VIDEOS FROM SERVER
 fetch('/api/images')
   .then(res => res.json())
   .then(files => {
@@ -15,6 +15,7 @@ function openUpload(){
     fileInput.click();
 }
 
+// CREATE FLOATING MEDIA (IMAGES OR VIDEOS)
 function createFloatingMedia(url) {
     let element;
     if(url.endsWith(".mp4") || url.endsWith(".webm") || url.endsWith(".ogg") || url.includes("video/upload")) {
@@ -38,7 +39,6 @@ fileInput.addEventListener("change", function(){
         const formData = new FormData();
         formData.append('image', file);
 
-        // FIXED: Updated path to /api/upload for Vercel
         fetch('/api/upload', {
             method: 'POST',
             body: formData
@@ -53,6 +53,7 @@ fileInput.addEventListener("change", function(){
     }
 });
 
+// FLOATING/BOUNCING MEDIA
 function startFloating(element){
     let x=Math.random()*(window.innerWidth-120);
     let y=Math.random()*(window.innerHeight-120);
@@ -62,6 +63,7 @@ function startFloating(element){
     let trailTimer=0;
 
     element.style.position = "fixed";
+
     function animate(){
         x+=dx; y+=dy; rotation+=0.2;
         if(x<=0 || x>=window.innerWidth-element.offsetWidth) dx*=-1;
@@ -74,38 +76,55 @@ function startFloating(element){
     animate();
 }
 
-/* --- REQUIRED CHANGES START HERE --- */
+/* FLOATING HEARTS WITH BOUNCE */
+const maxHearts = { red: 10, gold: 10 };
+let currentHearts = { red: 0, gold: 0 };
 
-/* FLOATING HEARTS WITH SPARKLES (Fixed for 15s) */
-setInterval(() => {
+function spawnHeart(type) {
+    if (currentHearts[type] >= maxHearts[type]) return;
+
     const heart = document.createElement("div");
-    
-    // Combining sparkles with the hearts as requested
-    const types = [
-        { char: "✨💛", class: "goldHeart3D" },
-        { char: "✨❤️", class: "redHeart3D" }
-    ];
-    const choice = types[Math.floor(Math.random() * types.length)];
+    heart.className = type === "red" ? "redHeart3D" : "goldHeart3D";
+    heart.innerHTML = type === "red" ? "❤️" : "💛";
+    heart.style.position = "fixed";
 
-    heart.className = choice.class;
-    heart.innerHTML = choice.char;
-    
-    // Random position across the bottom
-    heart.style.left = Math.random() * 100 + "vw";
-    heart.style.top = "100vh"; 
+    let x = Math.random() * (window.innerWidth - 50);
+    let y = Math.random() * (window.innerHeight - 50);
+    let dx = (Math.random() * 1 + 0.5) * (Math.random() > 0.5 ? 1 : -1);
+    let dy = (Math.random() * 1 + 0.5) * (Math.random() > 0.5 ? 1 : -1);
+    let rotation = 0;
 
     document.body.appendChild(heart);
+    currentHearts[type]++;
 
-    // Keep them on screen for the full 15s animation set in CSS
+    function animate() {
+        x += dx;
+        y += dy;
+        rotation += 0.2;
+
+        if (x <= 0 || x >= window.innerWidth - heart.offsetWidth) dx *= -1;
+        if (y <= 0 || y >= window.innerHeight - heart.offsetHeight) dy *= -1;
+
+        heart.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rotation}deg)`;
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    // Remove heart after 15s
     setTimeout(() => {
         heart.remove();
-    }, 15000); 
+        currentHearts[type]--;
+    }, 15000);
+}
 
-}, 1200); // Spawns every 1.2 seconds to avoid clutter
+// Spawn red or gold hearts randomly every 1.2s
+setInterval(() => {
+    const type = Math.random() > 0.5 ? "red" : "gold";
+    spawnHeart(type);
+}, 1200);
 
-/* --- REQUIRED CHANGES END HERE --- */
-
-
+// FULLSCREEN VIEWER FUNCTIONS
 function openImage(src,element){
     activeMediaWrapper = element;
     const viewer=document.getElementById("fullscreenViewer");
@@ -136,6 +155,7 @@ function closeViewer(){
     viewer.style.display="none";
 }
 
+// TRAIL HEARTS
 function createTrail(x,y){
     let trail=document.createElement("div");
     trail.innerHTML="💖";
@@ -146,6 +166,7 @@ function createTrail(x,y){
     setTimeout(()=>trail.remove(),1000);
 }
 
+// DELETE MEDIA BUTTON
 const deleteBtn = document.getElementById("deleteMediaBtn");
 if(deleteBtn){
     deleteBtn.onclick = function(e){
