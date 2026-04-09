@@ -36,20 +36,20 @@ function createFloatingMedia(url) {
 /* FILE UPLOAD TO SERVER */
 fileInput.addEventListener("change", function(){
     for(let file of this.files){
+        // Show immediately
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            createFloatingMedia(e.target.result);
+        }
+        reader.readAsDataURL(file);
+
+        // Then upload
         const formData = new FormData();
         formData.append('image', file);
-
-        fetch('/api/upload', {
-            method: 'POST',
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            if(data.url) {
-                createFloatingMedia(data.url);
-            }
-        })
-        .catch(err => console.error("Upload failed:", err));
+        fetch('/api/upload', { method: 'POST', body: formData })
+          .then(res => res.json())
+          .then(data => console.log("Uploaded:", data))
+          .catch(err => console.error("Upload failed:", err));
     }
 });
 
