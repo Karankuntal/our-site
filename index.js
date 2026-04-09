@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const app = express();
 
-app.use(express.static('Public')); // Serve your website files
+app.use(express.static('public')); // Serve your website files
 app.use(express.json()); // Needed for delete requests
 
 // Ensure uploads folder exists
