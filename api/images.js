@@ -1,29 +1,25 @@
-import { v2 as cloudinary } from "cloudinary";
+import cloudinary from "cloudinary";
 
-cloudinary.config({
+cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
 export default async function handler(req, res) {
-  if (req.method !== "GET") {
-    return res.status(405).json({ error: "Only GET allowed" });
-  }
-
   try {
-    const result = await cloudinary.search
-      .expression("folder:our-site")
+    const result = await cloudinary.v2.search
+      .expression("folder:uploads")
       .sort_by("created_at", "desc")
       .max_results(100)
       .execute();
 
-    res.status(200).json(
-      result.resources.map(file => ({
-        url: file.secure_url,
-        public_id: file.public_id
-      }))
-    );
+    const files = result.resources.map(file => ({
+      url: file.secure_url,
+      public_id: file.public_id
+    }));
+
+    res.status(200).json(files);
 
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -44,16 +44,18 @@ function createFloatingMedia(url, publicId) {
     startFloating(element);
 }
 
-// UPLOAD FILES
+/// UPLOAD FILES
 fileInput.addEventListener("change", function () {
     for (let file of this.files) {
 
+        // OPTIONAL: instant preview (temporary only)
         const reader = new FileReader();
         reader.onload = (e) => {
-            createFloatingMedia(e.target.result, null); // temporary preview
+            createFloatingMedia(e.target.result);
         };
         reader.readAsDataURL(file);
 
+        // upload to server
         const formData = new FormData();
         formData.append("image", file);
 
@@ -64,13 +66,14 @@ fileInput.addEventListener("change", function () {
         .then(res => res.json())
         .then(data => {
             if (data.url && data.public_id) {
+
+                // IMPORTANT: replace preview OR just add real one
                 createFloatingMedia(data.url, data.public_id);
             }
         })
         .catch(err => console.error("Upload failed:", err));
     }
 });
-
 // FLOATING ANIMATION
 function startFloating(element){
     let x = Math.random() * (window.innerWidth - 120);
