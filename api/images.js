@@ -18,16 +18,14 @@ export default async function handler(req, res) {
       .max_results(100)
       .execute();
 
-    const files = result.resources.map(file => ({
-      url: file.secure_url,
-      public_id: file.public_id
-    }));
-
-    return res.status(200).json(files);
+    res.status(200).json(
+      result.resources.map(file => ({
+        url: file.secure_url,
+        public_id: file.public_id
+      }))
+    );
 
   } catch (err) {
-    return res.status(500).json({
-      error: err.message
-    });
+    res.status(500).json({ error: err.message });
   }
 }
