@@ -22,10 +22,8 @@ export default async function handler(req, res) {
     }
 
     const result = await cloudinary.uploader.upload(file, {
-  folder: "our-site",
-  unique_filename: true,
-  overwrite: false
-});
+      folder: "our-site"
+    });
 
     return res.status(200).json({
       url: result.secure_url,

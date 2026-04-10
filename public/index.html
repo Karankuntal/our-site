@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 
@@ -8,27 +9,17 @@
 
 </head>
 
+<script>
+const password = "Ashikaran831";
+
+let userInput = prompt("Enter password to access the site");
+
+if(userInput !== password){
+    document.body.innerHTML = "<h1>Access Denied</h1>";
+}
+</script>
+
 <body>
-
-<!-- PASSWORD SCREEN -->
-<div id="loginScreen" style="text-align:center; margin-top:100px;">
-<h2>Enter password to access the site</h2>
-
-<input 
-type="password"
-id="passwordInput"
-placeholder="Enter password"
-style="padding:10px; font-size:16px;"
->
-
-<button onclick="checkPassword()" style="padding:10px 20px; font-size:16px;">
-Enter
-</button>
-
-</div>
-
-<!-- MAIN WEBSITE -->
-<div id="mainSite" style="display:none;">
 
 <h1>Our Beautiful Memories ❤️</h1>
 
@@ -46,10 +37,12 @@ hidden
 accept="image/*,video/*"
 >
 
-<!-- ORBIT SYSTEM -->
+<!-- ORBIT SYSTEM (auto creates circles) -->
+
 <div id="orbitSystem" class="orbitSystem"></div>
 
 <!-- FULLSCREEN VIEWER -->
+
 <div id="fullscreenViewer" class="viewer" onclick="closeViewer()">
 
 <button id="deleteMediaBtn">Delete</button>
@@ -60,27 +53,9 @@ accept="image/*,video/*"
 
 </div>
 
-</div>
-
-<script>
-const password = "Ashikaran831";
-
-function checkPassword(){
-
-    const userInput = document.getElementById("passwordInput").value;
-
-    if(userInput === password){
-        document.getElementById("loginScreen").style.display = "none";
-        document.getElementById("mainSite").style.display = "block";
-    }else{
-        alert("Access Denied");
-    }
-
-}
-</script>
-
 <script src="./script.js"></script>
 
 </body>
 
 </html>
+
