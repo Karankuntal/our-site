@@ -170,7 +170,7 @@ setInterval(() => {
     const types = ["gold", "red", "sparkle"];
     const choice = types[Math.floor(Math.random() * types.length)];
     spawnUpwardHeart(choice);
-}, 800);
+}, 600);
 
 // FULLSCREEN VIEWER
 function openImage(src, element){
