@@ -1,4 +1,14 @@
-const fileInput = document.getElementById("fileInput");
+fetch("/api/images")
+  .then(res => res.json())
+  .then(files => {
+
+    files.forEach(file => {
+        createFloatingMedia(file.url, file.public_id);
+    });
+
+  })
+  .catch(err => console.error("Images load error:", err));
+  const fileInput = document.getElementById("fileInput");
 const orbitSystem = document.getElementById("orbitSystem");
 let activeMediaWrapper = null;
 
@@ -44,7 +54,6 @@ function createFloatingMedia(url, publicId) {
     startFloating(element);
 }
 
-// UPLOAD FILES
 fileInput.addEventListener("change", function () {
 
     for (let file of this.files) {
@@ -55,10 +64,6 @@ fileInput.addEventListener("change", function () {
 
             const base64 = e.target.result;
 
-            // show preview instantly
-            createFloatingMedia(base64);
-
-            // send to server
             fetch("/api/upload", {
                 method: "POST",
                 headers: {
@@ -68,9 +73,11 @@ fileInput.addEventListener("change", function () {
             })
             .then(res => res.json())
             .then(data => {
+
                 if (data.url && data.public_id) {
                     createFloatingMedia(data.url, data.public_id);
                 }
+
             })
             .catch(err => console.error("Upload failed:", err));
 
