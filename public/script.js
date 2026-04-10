@@ -1,31 +1,22 @@
-fetch("/api/images")
-  .then(res => res.json())
-  .then(files => {
-
-    files.forEach(file => {
-        createFloatingMedia(file.url, file.public_id);
-    });
-
-  })
-  .catch(err => console.error("Images load error:", err));
-  const fileInput = document.getElementById("fileInput");
+const fileInput = document.getElementById("fileInput");
 const orbitSystem = document.getElementById("orbitSystem");
 let activeMediaWrapper = null;
 
-// FETCH IMAGES/VIDEOS FROM SERVER (PERMANENT LOAD)
+// 1. FETCH IMAGES FROM SERVER (Runs once on load)
 fetch('/api/images')
   .then(res => res.json())
   .then(files => {
     files.forEach(file => {
         createFloatingMedia(file.url, file.public_id);
     });
-  });
+  })
+  .catch(err => console.error("Images load error:", err));
 
 function openUpload(){
     fileInput.click();
 }
 
-// CREATE FLOATING MEDIA (IMAGE / VIDEO)
+// 2. CREATE FLOATING MEDIA (IMAGE / VIDEO)
 function createFloatingMedia(url, publicId) {
     let element;
 
@@ -46,48 +37,37 @@ function createFloatingMedia(url, publicId) {
     }
 
     element.className = "media";
-
-    // 🔥 IMPORTANT: store cloudinary id for delete
-    element.dataset.publicId = publicId;
+    element.dataset.publicId = publicId; // Store ID for deletion
 
     orbitSystem.appendChild(element);
     startFloating(element);
 }
 
+// 3. UPLOAD LOGIC
 fileInput.addEventListener("change", function () {
-
     for (let file of this.files) {
-
         const reader = new FileReader();
-
         reader.onload = function (e) {
-
             const base64 = e.target.result;
 
             fetch("/api/upload", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ file: base64 })
             })
             .then(res => res.json())
             .then(data => {
-
                 if (data.url && data.public_id) {
                     createFloatingMedia(data.url, data.public_id);
                 }
-
             })
             .catch(err => console.error("Upload failed:", err));
-
         };
-
         reader.readAsDataURL(file);
     }
-
 });
-// FLOATING ANIMATION
+
+// 4. FLOATING ANIMATION
 function startFloating(element){
     let x = Math.random() * (window.innerWidth - 120);
     let y = Math.random() * (window.innerHeight - 120);
@@ -106,22 +86,19 @@ function startFloating(element){
         if (x <= 0 || x >= window.innerWidth - element.offsetWidth) dx *= -1;
         if (y <= 0 || y >= window.innerHeight - element.offsetHeight) dy *= -1;
 
-        element.style.transform =
-            `translate3d(${x}px, ${y}px, 0) rotate(${rotation}deg)`;
+        element.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${rotation}deg)`;
 
         trailTimer++;
         if (trailTimer % 15 === 0) createTrail(x, y);
 
         requestAnimationFrame(animate);
     }
-
     animate();
 }
 
-// UPWARD HEARTS ANIMATION
+// 5. HEART ANIMATIONS
 function spawnUpwardHeart(type) {
     const heart = document.createElement("div");
-
     if (type === "gold") {
         heart.className = "goldHeart3D";
         heart.innerHTML = "💛";
@@ -134,7 +111,6 @@ function spawnUpwardHeart(type) {
     }
 
     document.body.appendChild(heart);
-
     let x = Math.random() * (window.innerWidth - 50);
     let y = window.innerHeight + 50;
 
@@ -146,14 +122,9 @@ function spawnUpwardHeart(type) {
 
     function animate(time) {
         const progress = (time - startTime) / duration;
-
-        heart.style.top =
-            (window.innerHeight - progress * (window.innerHeight + 100)) + "px";
-
+        heart.style.top = (window.innerHeight - progress * (window.innerHeight + 100)) + "px";
         heart.style.opacity = Math.min(progress + 0.2, 1);
-
-        heart.style.transform =
-            `translateX(${10 * Math.sin(progress * Math.PI * 4)}px)`;
+        heart.style.transform = `translateX(${10 * Math.sin(progress * Math.PI * 4)}px)`;
 
         if (progress < 1) {
             requestAnimationFrame(animate);
@@ -161,28 +132,24 @@ function spawnUpwardHeart(type) {
             heart.remove();
         }
     }
-
     requestAnimationFrame(animate);
 }
 
-// HEART SPAWN LOOP
 setInterval(() => {
     const types = ["gold", "red", "sparkle"];
     const choice = types[Math.floor(Math.random() * types.length)];
     spawnUpwardHeart(choice);
 }, 600);
 
-// FULLSCREEN VIEWER
+// 6. VIEWERS & DELETE
 function openImage(src, element){
     activeMediaWrapper = element;
     const viewer = document.getElementById("fullscreenViewer");
     const img = document.getElementById("viewerImage");
     const video = document.getElementById("viewerVideo");
-
     video.style.display = "none";
     img.style.display = "block";
     img.src = src;
-
     viewer.style.display = "flex";
 }
 
@@ -191,61 +158,48 @@ function openVideo(src, element){
     const viewer = document.getElementById("fullscreenViewer");
     const img = document.getElementById("viewerImage");
     const video = document.getElementById("viewerVideo");
-
     img.style.display = "none";
     video.style.display = "block";
     video.src = src;
     video.play();
-
     viewer.style.display = "flex";
 }
 
 function closeViewer(){
     const viewer = document.getElementById("fullscreenViewer");
     const video = document.getElementById("viewerVideo");
-
     video.pause();
     viewer.style.display = "none";
 }
 
-// TRAIL HEARTS
 function createTrail(x, y){
     let trail = document.createElement("div");
     trail.innerHTML = "💖";
     trail.className = "trailHeart";
     trail.style.left = x + "px";
     trail.style.top = y + "px";
-
     document.body.appendChild(trail);
     setTimeout(() => trail.remove(), 1000);
 }
 
-// DELETE (Cloudinary + UI)
 const deleteBtn = document.getElementById("deleteMediaBtn");
-
 if (deleteBtn) {
     deleteBtn.onclick = function (e) {
         e.stopPropagation();
-
         if (activeMediaWrapper) {
             const publicId = activeMediaWrapper.dataset.publicId;
-
-            activeMediaWrapper.remove();
-
+            activeMediaWrapper.remove(); // Remove from UI
             if (publicId) {
                 fetch("/api/delete", {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ public_id: publicId })
                 })
                 .then(res => res.json())
-                .then(data => console.log("Deleted:", data))
+                .then(data => console.log("Deleted from Cloudinary:", data))
                 .catch(err => console.error("Delete error:", err));
             }
         }
-
         closeViewer();
     };
 }
