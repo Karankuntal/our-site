@@ -44,35 +44,41 @@ function createFloatingMedia(url, publicId) {
     startFloating(element);
 }
 
-/// UPLOAD FILES
+// UPLOAD FILES
 fileInput.addEventListener("change", function () {
+
     for (let file of this.files) {
 
-        // OPTIONAL: instant preview (temporary only)
         const reader = new FileReader();
-        reader.onload = (e) => {
-            createFloatingMedia(e.target.result);
+
+        reader.onload = function (e) {
+
+            const base64 = e.target.result;
+
+            // show preview instantly
+            createFloatingMedia(base64);
+
+            // send to server
+            fetch("/api/upload", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ file: base64 })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.url && data.public_id) {
+                    createFloatingMedia(data.url, data.public_id);
+                }
+            })
+            .catch(err => console.error("Upload failed:", err));
+
         };
+
         reader.readAsDataURL(file);
-
-        // upload to server
-        const formData = new FormData();
-        formData.append("image", file);
-
-        fetch("/api/upload", {
-            method: "POST",
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.url && data.public_id) {
-
-                // IMPORTANT: replace preview OR just add real one
-                createFloatingMedia(data.url, data.public_id);
-            }
-        })
-        .catch(err => console.error("Upload failed:", err));
     }
+
 });
 // FLOATING ANIMATION
 function startFloating(element){
