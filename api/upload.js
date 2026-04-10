@@ -1,54 +1,56 @@
-import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
+import formidable from "formidable";
 
-// Configuration using Environment Variables from Vercel
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "our-site",
-    resource_type: "auto" // Supports both images and videos
-  }
-});
-
-const upload = multer({ storage });
-
-// Vercel config to allow Multer to handle the file data
+// IMPORTANT for Vercel
 export const config = {
   api: {
     bodyParser: false
   }
 };
 
-export default function handler(req, res) {
+function parseForm(req) {
+  const form = formidable({ multiples: false });
+  return new Promise((resolve, reject) => {
+    form.parse(req, (err, fields, files) => {
+      if (err) reject(err);
+      else resolve({ fields, files });
+    });
+  });
+}
 
-  // Only allow POST requests for uploads
+export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({ message: "Only POST allowed" });
+    return res.status(405).json({ error: "Only POST allowed" });
   }
 
-  // Changed "file" to "image" to match: formData.append("image", file) in script.js
-  upload.single("image")(req, res, function(err) {
+  try {
+    const { files } = await parseForm(req);
 
-    if (err) {
-      return res.status(500).json({ error: err.message });
+    if (!files || !files.image) {
+      return res.status(400).json({ error: "No file uploaded (field must be 'image')" });
     }
 
-    if (!req.file) {
-      return res.status(400).json({ error: "No file uploaded. Check if field name is 'image'" });
-    }
+    const file = files.image;
 
-    // Success response with permanent Cloudinary URL
-    return res.status(200).json({
-      url: req.file.path,          
-      public_id: req.file.filename 
+    const result = await cloudinary.uploader.upload(file.filepath, {
+      folder: "our-site",
+      resource_type: "auto"
     });
 
-  });
+    return res.status(200).json({
+      url: result.secure_url,
+      public_id: result.public_id
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      error: err.message
+    });
+  }
 }
