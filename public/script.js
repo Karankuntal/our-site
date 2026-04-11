@@ -27,7 +27,7 @@ function createFloatingMedia(url, publicId) {
         url.includes("video/upload")
     ) {
         element = document.createElement("video");
-        element.src = url;
+        element.src = url
         element.controls = true;
         element.onclick = () => openVideo(url, element);
     } else {
